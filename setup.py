@@ -11,7 +11,7 @@ setuptools.setup(
     name=fairlearn.__name__,
     version=fairlearn.__version__,
     author="Miroslav Dudik, Richard Edgar, Brandon Horn, Roman Lutz",
-    author_email="mdudik@gmail.com",
+    author_email="azuremlfairness@microsoft.com",
     description="Algorithms for fair classification",
     long_description=long_description,
     long_description_content_type="text/markdown",
