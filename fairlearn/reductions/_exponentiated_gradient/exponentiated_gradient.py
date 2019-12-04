@@ -8,11 +8,11 @@ classification to standard binary classification.
 import logging
 import numpy as np
 import pandas as pd
-from fairlearn.reductions import Reduction
+from ...reductions._reduction import Reduction
 from ._constants import _ACCURACY_MUL, _REGRET_CHECK_START_T, _REGRET_CHECK_INCREASE_T, \
     _SHRINK_REGRET, _SHRINK_ETA, _MIN_T, _RUN_LP_STEP, _PRECISION, _INDENTATION
 from ._lagrangian import _Lagrangian
-from fairlearn._input_validation import _validate_and_reformat_reductions_input
+from ..._input_validation import _validate_and_reformat_reductions_input
 
 logger = logging.getLogger(__name__)
 
@@ -133,11 +133,11 @@ class ExponentiatedGradient(Reduction):
         self._best_classifier = None
         self._classifiers = None
 
-    def fit(self, X, y, **kwargs):
+    def fit(self, X, y, sensitive_features, **kwargs):
         """ Return a fair classifier under specified fairness constraints via
             exponentiated-gradient reduction.
         """
-        X_train, y_train, A = _validate_and_reformat_reductions_input(X, y, **kwargs)
+        X_train, y_train, A = _validate_and_reformat_reductions_input(X, y, sensitive_features, **kwargs)
 
         n = X_train.shape[0]
 
@@ -145,7 +145,7 @@ class ExponentiatedGradient(Reduction):
 
         B = 1 / self._eps
         lagrangian = _Lagrangian(X_train, A, y_train, self._estimator, self._constraints,
-                                 self._eps, B)
+                                 self._eps, B, **kwargs)
 
         theta = pd.Series(0, lagrangian.constraints.index)
         Qsum = pd.Series()

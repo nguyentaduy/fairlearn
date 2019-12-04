@@ -13,20 +13,21 @@ _MESSAGE_X_SENSITIVE_ROWS = "X and the sensitive features must have same number 
 _KW_SENSITIVE_FEATURES = "sensitive_features"
 
 
-def _validate_and_reformat_reductions_input(X, y, enforce_binary_sensitive_feature=False,
+def _validate_and_reformat_reductions_input(X, y, sensitive_features, enforce_binary_sensitive_feature=False,
                                             **kwargs):
+    print(kwargs.keys())
     if X is None:
         raise ValueError(_MESSAGE_X_NONE)
 
     if y is None:
         raise ValueError(_MESSAGE_Y_NONE)
 
-    if _KW_SENSITIVE_FEATURES not in kwargs:
+    if sensitive_features is None:
         msg = "Must specify {0} (for now)".format(_KW_SENSITIVE_FEATURES)
         raise RuntimeError(msg)
 
     # Extract the target attribute
-    sensitive_features_vector = _make_vector(kwargs[_KW_SENSITIVE_FEATURES],
+    sensitive_features_vector = _make_vector(sensitive_features,
                                              _KW_SENSITIVE_FEATURES)
 
     if enforce_binary_sensitive_feature:
@@ -43,7 +44,7 @@ def _validate_and_reformat_reductions_input(X, y, enforce_binary_sensitive_featu
     if X_rows != sensitive_features_vector.shape[0]:
         raise RuntimeError(_MESSAGE_X_SENSITIVE_ROWS)
 
-    return pd.DataFrame(X), y_vector, sensitive_features_vector
+    return X, y_vector, sensitive_features_vector
 
 
 def _make_vector(formless, formless_name):
@@ -81,9 +82,9 @@ def _get_matrix_shape(formless, formless_name):
         num_cols = len(formless.columns)
         num_rows = len(formless.index)
     elif isinstance(formless, np.ndarray):
-        if len(formless.shape) == 2:
+        if len(formless.shape) >= 2:
             num_rows = formless.shape[0]
-            num_cols = formless.shape[1]
+            num_cols = formless.shape[1:]
         else:
             msgfmt = "{0} is an ndarray which is not 2D"
             raise RuntimeError(msgfmt.format(formless_name))

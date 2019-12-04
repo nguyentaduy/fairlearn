@@ -5,11 +5,11 @@ import copy
 import numpy as np
 import pandas as pd
 
-from fairlearn._input_validation import _validate_and_reformat_reductions_input
-from fairlearn import _NO_PREDICT_BEFORE_FIT
-from fairlearn.exceptions import NotFittedException
-from fairlearn.reductions import Reduction
-from fairlearn.reductions._moments import Moment, ClassificationMoment
+from ..._input_validation import _validate_and_reformat_reductions_input
+from ...__init__ import _NO_PREDICT_BEFORE_FIT
+from ...exceptions import NotFittedException
+from .._reduction import Reduction
+from .._moments import Moment, ClassificationMoment
 from .grid_search_result import GridSearchResult
 
 TRADEOFF_OPTIMIZATION = "tradeoff_optimization"

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class _Lagrangian:
     """ Operations related to the Lagrangian"""
 
-    def __init__(self, X, A, y, learner, constraints, eps, B, opt_lambda=True):
+    def __init__(self, X, A, y, learner, constraints, eps, B, opt_lambda=True, **kw):
         self.X = X
         self.constraints = constraints
         self.constraints.load_data(X, y, sensitive_features=A)
@@ -34,6 +34,7 @@ class _Lagrangian:
         self.n_oracle_calls = 0
         self.last_linprog_n_hs = 0
         self.last_linprog_result = None
+        self.kw = kw
 
     def eval_from_error_gamma(self, error, gamma, lambda_vec):
         """ Return the value of the Lagrangian.
@@ -130,7 +131,7 @@ class _Lagrangian:
         redW = self.n * redW / redW.sum()
 
         classifier = pickle.loads(self.pickled_learner)
-        classifier.fit(self.X, redY, sample_weight=redW)
+        classifier.fit(self.X, redY, sample_weight=redW, **(self.kw))
         self.n_oracle_calls += 1
 
         def h(X): return classifier.predict(X)
